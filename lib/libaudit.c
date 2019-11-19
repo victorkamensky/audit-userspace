@@ -594,6 +594,16 @@ extern int  audit_set_loginuid_immutable(int fd)
 #endif
 }
 
+extern int  audit_set_ubacktrace_context(int fd, int value)
+{
+#if HAVE_DECL_AUDIT_FEATURE_UBACKTRACE_CONTEXT == 1
+	return audit_set_feature(fd, AUDIT_FEATURE_UBACKTRACE_CONTEXT, value, 1);
+#else
+	errno = EINVAL;
+	return -1;
+#endif
+}
+
 #define AUDIT_FEATURES_UNSET 0xFFFFFFFF
 #define AUDIT_FEATURES_UNSUPPORTED 0xEFFFFFFF
 static uint32_t features_bitmap = AUDIT_FEATURES_UNSET;

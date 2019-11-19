@@ -290,6 +290,10 @@ extern "C" {
 #define AUDIT_TIME_ADJNTPVAL	1333 /* NTP value adjustment */
 #endif
 
+#ifndef AUDIT_UBACKTRACE
+#define AUDIT_UBACKTRACE	1334 /* User land backtrace */
+#endif
+
 #ifndef AUDIT_MAC_CALIPSO_ADD
 #define AUDIT_MAC_CALIPSO_ADD	1418 /* NetLabel: add CALIPSO DOI entry */
 #endif
@@ -620,6 +624,7 @@ int audit_set_backlog_wait_time(int fd, uint32_t bwt);
 int audit_reset_lost(int fd);
 extern int  audit_set_feature(int fd, unsigned feature, unsigned value, unsigned lock);
 extern int  audit_set_loginuid_immutable(int fd);
+extern int  audit_set_ubacktrace_context(int fd, int value);
 
 /* AUDIT_LIST_RULES */
 extern int  audit_request_rules_list_data(int fd);

@@ -144,6 +144,9 @@ static void usage(void)
 #if defined(HAVE_STRUCT_AUDIT_STATUS_FEATURE_BITMAP)
      "    --reset-lost         Reset the lost record counter\n"
 #endif
+#if HAVE_DECL_AUDIT_FEATURE_UBACKTRACE_CONTEXT == 1
+     "    --ubacktrace_context <1|0> Enable/disable user-land backtrace in audit context\n"
+#endif
      );
 }
 
@@ -457,6 +460,9 @@ struct option long_opts[] =
 #endif
 #if defined(HAVE_STRUCT_AUDIT_STATUS_FEATURE_BITMAP)
   {"reset-lost", 0, NULL, 3},
+#endif
+#if HAVE_DECL_AUDIT_FEATURE_UBACKTRACE_CONTEXT == 1
+  {"ubacktrace_context", 1, NULL, 4},
 #endif
   {NULL, 0, NULL, 0}
 };
@@ -1006,6 +1012,27 @@ process_keys:
 			audit_number_to_errmsg(rc, long_opts[lidx].name);
 			retval = -1;
 		}
+		break;
+	case 4:
+#if HAVE_DECL_AUDIT_FEATURE_UBACKTRACE_CONTEXT == 1
+		if (optarg && ((strcmp(optarg, "0") == 0) ||
+				(strcmp(optarg, "1") == 0))) {
+			retval = audit_set_ubacktrace_context(fd,  strtoul(optarg,NULL,0));
+			if (retval <= 0)
+				retval = -1;
+			else
+				return -2;  // success - no reply for this
+		} else {
+			audit_msg(LOG_ERR,
+			    "Ubacktrace_context must be 0 or 1 value was %s",
+				optarg);
+			retval = -1;
+		}
+#else
+		audit_msg(LOG_ERR,
+			"ubacktrace_context is not supported on your kernel");
+		retval = -1;
+#endif
 		break;
         default: 
 		usage();
